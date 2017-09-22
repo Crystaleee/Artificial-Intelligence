@@ -12,14 +12,18 @@ public class Board {
 
 	public Board() {
 		this.value = new int[9];
+
+		// initialize the array to show position number
+		for (int i = 0; i < this.value.length; i++) {
+			this.value[i] = i+1;
+		}
 	}
 
 	public Board(int[] v) {
-		// TODO Auto-generated constructor stub
 		this.value = v;
 
-		for (int i : v) {
-			if (i != 0) {
+		for (int i = 0; i < this.value.length; i++) {
+			if (this.value[i] != i) {
 				this.filled++;
 			}
 		}
@@ -60,7 +64,7 @@ public class Board {
 			return "X";
 		if (value == TicTacToe.O)
 			return "O";
-		return null;
+		return value + "";
 	}
 
 	/**
@@ -72,7 +76,7 @@ public class Board {
 		List<Integer> blanks = new ArrayList<Integer>();
 
 		for (int i = 0; i < this.value.length; i++) {
-			if (this.value[i] == 0) {
+			if (this.value[i] == i+1) {
 				blanks.add(i);
 			}
 		}

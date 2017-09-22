@@ -1,7 +1,5 @@
 import java.util.Scanner;
 
-import org.omg.CosNaming.IstringHelper;
-
 /**
  * @author zhubingjing
  * @date 2017年9月20日 下午2:20:12
@@ -47,8 +45,19 @@ public class Main {
 
 					moveUserAndPrint(ttt, move);
 				}
-				ttt.whoseTurn = -ttt.whoseTurn;
+				
+				//change turn
+				changeTurn(ttt);
+				
 			}
+		}
+	}
+
+	private static void changeTurn(TicTacToe ttt) {
+		if(ttt.whoseTurn == ttt.markerAI){
+			ttt.whoseTurn = ttt.markerPlayer;
+		}else{
+			ttt.whoseTurn = ttt.markerAI;
 		}
 	}
 
