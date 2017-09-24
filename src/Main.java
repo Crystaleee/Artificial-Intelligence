@@ -5,26 +5,32 @@ import java.util.Scanner;
  * @date 2017年9月20日 下午2:20:12
  */
 public class Main {
+	static final int X = Integer.MIN_VALUE;
+	static final int O = Integer.MAX_VALUE;
 	
-
 	public static void main(String[] args) {
-//		TicTacToe ttt =new TicTacToe(TicTacToe.O);
-//		int[] v = {1,1,-1,-1,-1,1,-1-1,1};
-//		Board b =new Board(v);
-//		int i = ttt.isTerminal(v);
-//		System.out.println(i);
-		TicTacToe ttt = null;
+
+		AdvancedTicTacToe ttt = null;
 		Scanner scanner = new Scanner(System.in);
 
 		while (true) {
 			System.err.println("Hello there! Tic-Tac-Toe time! Do you want to play X or O? (X/O)");
 
 			// assign marker for user and AI
-			ttt = assignMarker(ttt, scanner);
+			ttt = initialize(ttt, scanner);
 			if (ttt == null)
 				continue;
 
 			// game on
+			int[] array = {X,O,X,O,O,6,X,X,O};
+			Board b = new Board(array);
+			
+			int[] array2 = {1,2,3,4,5,6,7,8,9};
+			Board b2 = new Board(array2);
+			
+			Board[] bs= {b2,b,b,b,b,b,b,b,b};
+			ttt.nineBoard.setBoards(bs);
+			
 			while (!ttt.isGameOver()) {
 				System.err.println();
 
@@ -34,8 +40,8 @@ public class Main {
 
 				} else {// user move
 
-					System.err.println("Your turn! Please enter a position: (1-9)");
-					int move = parseInput(scanner.next());
+					System.err.println("Your turn! Please enter two numbers (first for board, second for position):");
+					Move move = parseInput(scanner.next());
 
 					// check legal move
 					if (!ttt.isLegalMove(move)) {
@@ -45,37 +51,29 @@ public class Main {
 
 					moveUserAndPrint(ttt, move);
 				}
-				
-				//change turn
-				changeTurn(ttt);
-				
+
+				// change turn
+				ttt.changeTurn();
+
 			}
 		}
 	}
 
-	private static void changeTurn(TicTacToe ttt) {
-		if(ttt.whoseTurn == ttt.markerAI){
-			ttt.whoseTurn = ttt.markerPlayer;
-		}else{
-			ttt.whoseTurn = ttt.markerAI;
-		}
-	}
-
 	/**
-	 * assign marker X/O to user/AI
+	 * Initialize the TTT: assign marker X/O to user/AI; assign boardAssigner
 	 * 
 	 * @param ttt
 	 * @param scanner
-	 * @return marker assigned ttt; null if wrong input
+	 * @return initialized ttt; null if wrong input
 	 */
-	private static TicTacToe assignMarker(TicTacToe ttt, Scanner scanner) {
+	private static AdvancedTicTacToe initialize(AdvancedTicTacToe ttt, Scanner scanner) {
 		String answer;
 		answer = scanner.next().toUpperCase().trim();
-		if (answer.equals(new String("X"))) {
-			ttt = new TicTacToe(TicTacToe.O);
 
+		if (answer.equals(new String("X"))) {
+			ttt = new AdvancedTicTacToe(AdvancedTicTacToe.O);
 		} else if (answer.equals(new String("O"))) {
-			ttt = new TicTacToe(TicTacToe.X);
+			ttt = new AdvancedTicTacToe(AdvancedTicTacToe.X);
 		} else {
 			System.err.println("Wrong input!");
 			return null;
@@ -83,30 +81,44 @@ public class Main {
 		return ttt;
 	}
 
-	private static int parseInput(String input) {
+	/**
+	 * 
+	 * @param input
+	 * @return Move(boardNum, pos); NULL if illegal
+	 */
+	private static Move parseInput(String input) {
+		int boardNum = -1;
 		int move = -1;
 		try {
-			move = Integer.parseInt(input);
+			// if less than 2 digits return -1
+			if (input.length() < 2)
+				return null;
+
+			// the first char
+			boardNum = Integer.parseInt(input.substring(0, 1)) - 1;
+			// the last char
+			move = Integer.parseInt(input.substring(input.length() - 1)) - 1;
+
 		} catch (Exception e) {
 
 		}
-		return move;
+		return new Move(boardNum, move);
 	}
 
-	private static void moveUserAndPrint(TicTacToe ttt, int move) {
+	private static void moveUserAndPrint(AdvancedTicTacToe ttt, Move move) {
 		ttt.makePlayerMove(move);
 
 		// print new board
-		ttt.board.print();
+		ttt.nineBoard.print();
 	}
 
-	private static void moveAIandPrint(TicTacToe ttt) {
-		int move = ttt.makeAIMove();
+	private static void moveAIandPrint(AdvancedTicTacToe ttt) {
+		Move move = ttt.makeAIMove();
 		System.err.println("I've done my move:");
-		System.out.println(move + 1);
+		System.out.println((move.boardNum + 1) + "" + (move.position + 1));
 
 		// print new board
-		ttt.board.print();
+		ttt.nineBoard.print();
 	}
 
 }

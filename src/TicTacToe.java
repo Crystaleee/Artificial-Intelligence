@@ -1,12 +1,13 @@
 import java.util.List;
 
 /**
+ * Regular TicTacToe
  * @author zhubingjing
  * @date 2017年9月20日 下午12:05:44
  */
 public class TicTacToe {
-	static final int X = Integer.MIN_VALUE;
-	static final int O = Integer.MAX_VALUE;
+	static final int X = 1;
+	static final int O = -1;
 	static final int UTILITY_WIN_AI = 1;
 	static final int UTILITY_WIN_PLAYER = -1;
 	static final int UTILITY_TIE = 0;
@@ -22,11 +23,7 @@ public class TicTacToe {
 		// int[] v = {-1,1,0,-1,1,1,0,-1,0};
 		// this.board = new Board(v);
 		this.markerAI = marker;
-		if (marker == X) {
-			this.markerPlayer = O;
-		} else {
-			this.markerPlayer = X;
-		}
+		this.markerPlayer = -markerAI;
 	}
 
 	boolean isLegalMove(int move) {
@@ -145,7 +142,7 @@ public class TicTacToe {
 
 		// check row
 		for (int i = 0; i < state.length; i = i + Board.ROW) {
-			if (state[i] != i + 1 && state[i] == state[i + 1] && state[i + 1] == state[i + 2]) {
+			if (state[i] != 0 && state[i] == state[i + 1] && state[i + 1] == state[i + 2]) {
 				if (state[i] == this.markerAI)
 					return UTILITY_WIN_AI;
 				else if (state[i] == this.markerPlayer)
@@ -155,7 +152,7 @@ public class TicTacToe {
 
 		// check column
 		for (int i = 0; i < Board.ROW; i++) {
-			if (state[i] != i + 1 && state[i] == state[i + 3] && state[i + 3] == state[i + 6]) {
+			if (state[i] != 0 && state[i] == state[i + 3] && state[i + 3] == state[i + 6]) {
 				if (state[i] == this.markerAI)
 					return UTILITY_WIN_AI;
 				else if (state[i] == this.markerPlayer)
@@ -164,8 +161,8 @@ public class TicTacToe {
 		}
 
 		// check diagonal
-		if ((state[4] != 5 && state[0] == state[4] && state[4] == state[8])
-				|| (state[4] != 5 && state[2] == state[4] && state[4] == state[6])) {
+		if ((state[4] != 0 && state[0] == state[4] && state[4] == state[8])
+				|| (state[4] != 0 && state[2] == state[4] && state[4] == state[6])) {
 			if (state[4] == this.markerAI)
 				return UTILITY_WIN_AI;
 			else if (state[4] == this.markerPlayer)
