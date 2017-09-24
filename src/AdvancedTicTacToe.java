@@ -50,7 +50,7 @@ public class AdvancedTicTacToe {
 
 		if (move == null)
 			return false;
-		
+
 		int boardNum = move.boardNum;
 		int pos = move.position;
 
@@ -82,7 +82,7 @@ public class AdvancedTicTacToe {
 
 		for (Move move : possibleMove) {
 			NineBoard b = this.nineBoard.applyMove(move, markerAI);
-			int v = advancedMinValue(b);
+			int v = advancedMinValue(b , Integer.MIN_VALUE, Integer.MAX_VALUE);
 			System.err.println("The value of action " + (move.boardNum + 1) + (move.position + 1) + " is " + v);
 
 			if (max < v) {
@@ -95,7 +95,7 @@ public class AdvancedTicTacToe {
 		return bestMove;
 	}
 
-	private int advancedMinValue(NineBoard nb) {
+	private int advancedMinValue(NineBoard nb, int alpha, int beta) {
 		int utility = advancedUtility(nb);
 
 		// state is a terminal state
@@ -108,17 +108,22 @@ public class AdvancedTicTacToe {
 
 		for (Move move : possibleMove) {
 			NineBoard b = nb.applyMove(move, markerPlayer);
-			int v = advancedMaxValue(b);
+			int v = advancedMaxValue(b, alpha, beta);
 			System.err.println("Move " + move.boardNum + move.position + "'s value is " + v);
 
 			if (min > v) {
 				min = v;
 			}
+			if (min <= alpha){
+				System.err.println("Prune!");
+				return min;
+			}				
+			beta = Math.max(beta, min);
 		}
 		return min;
 	}
 
-	private int advancedMaxValue(NineBoard nb) {
+	private int advancedMaxValue(NineBoard nb, int alpha, int beta) {
 		int utility = advancedUtility(nb);
 
 		// state is a terminal state
@@ -131,12 +136,18 @@ public class AdvancedTicTacToe {
 
 		for (Move move : possibleMove) {
 			NineBoard b = nb.applyMove(move, markerAI);
-			int v = advancedMinValue(b);
+			int v = advancedMinValue(b, alpha, beta);
 			System.err.println("Move " + move.boardNum + move.position + "'s value is " + v);
 
 			if (max < v) {
 				max = v;
 			}
+			if (max >= beta){
+				System.err.println("Prune!");
+				return max;
+			}
+				
+			alpha = Math.max(alpha, max);
 		}
 		return max;
 	}

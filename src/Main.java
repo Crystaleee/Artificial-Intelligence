@@ -22,13 +22,16 @@ public class Main {
 				continue;
 
 			// game on
-			int[] array = {X,O,X,O,O,6,X,X,O};
+			int[] array = {X,O,X,O,O,X,X,X,O};
 			Board b = new Board(array);
 			
 			int[] array2 = {1,2,3,4,5,6,7,8,9};
 			Board b2 = new Board(array2);
 			
-			Board[] bs= {b2,b,b,b,b,b,b,b,b};
+			int[] array3 = {X,2,3,O,5,X,X,O,O};
+			Board b3 = new Board(array3);
+			
+			Board[] bs= {b2,b3,b,b,b,b,b,b,b};
 			ttt.nineBoard.setBoards(bs);
 			
 			while (!ttt.isGameOver()) {
