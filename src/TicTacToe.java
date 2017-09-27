@@ -70,7 +70,8 @@ public class TicTacToe {
 			b.setPosition(possibleActions.get(i), this.markerAI);
 
 			int v = minValue(b);
-			System.err.println("The value of action " + (possibleActions.get(i) + 1) + " is " + v);
+			System.err.println("The value of action " 
+			+ (possibleActions.get(i) + 1) + " is " + v);
 
 			if (max < v) {
 				max = v;
@@ -82,7 +83,7 @@ public class TicTacToe {
 	}
 
 	private int minValue(Board board) {
-		int utility = isTerminal(board);
+		int utility = utility(board);
 
 		// state is a terminal state
 		if (utility != NONTERMINAL) {
@@ -103,12 +104,11 @@ public class TicTacToe {
 				min = v;
 			}
 		}
-
 		return min;
 	}
 
 	private int maxValue(Board board) {
-		int utility = isTerminal(board);
+		int utility = utility(board);
 
 		// state is a terminal state
 		if (utility != NONTERMINAL) {
@@ -137,7 +137,7 @@ public class TicTacToe {
 	 * @param state
 	 * @return the utility if game is over, or null if not
 	 */
-	int isTerminal(Board board) {
+	int utility(Board board) {
 		int[] state = board.getValue();
 
 		// check row
@@ -178,7 +178,7 @@ public class TicTacToe {
 	}
 
 	boolean isGameOver() {
-		int utility = isTerminal(this.board);
+		int utility = utility(this.board);
 		return checkWinnerAndPrint(utility);
 	}
 

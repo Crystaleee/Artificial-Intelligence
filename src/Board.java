@@ -43,12 +43,24 @@ public class Board {
 		return this.value;
 	}
 
+	public int getFilled() {
+		return filled;
+	}
+
 	public Board setPosition(int position, int marker) {
 		this.value[position] = marker;
 		this.filled++;
 		this.blankspace.remove(new Integer(position));
 
 		return this;
+	}
+
+	public static String valueToMarker(int value) {
+		if (value == AdvancedTicTacToe.X)
+			return "X";
+		if (value == AdvancedTicTacToe.O)
+			return "O";
+		return value + "";
 	}
 
 	public void print() {
@@ -59,16 +71,31 @@ public class Board {
 		}
 	}
 
-	public int getFilled() {
-		return filled;
+	/**
+	 * copy the current board and new a same board to apply possible actions
+	 * 
+	 * @param b
+	 * @return
+	 */
+	public Board copy() {
+		// copy the array so the two board won't point to the same array
+		int[] tmp = new int[9];
+		System.arraycopy(this.value, 0, tmp, 0, this.value.length);
+	
+		List<Integer> tmp2 = new ArrayList<Integer>();
+		tmp2.addAll(this.blankspace);
+	
+		Board b2 = new Board();
+		b2.value = tmp;
+		b2.filled = this.filled;
+		b2.blankspace = tmp2;
+	
+		return b2;
 	}
 
-	public static String valueToMarker(int value) {
-		if (value == AdvancedTicTacToe.X)
-			return "X";
-		if (value == AdvancedTicTacToe.O)
-			return "O";
-		return value + "";
+	// if a board is full
+	public Boolean isFull() {
+		return this.filled == ROW * ROW;
 	}
 
 	/**
@@ -85,33 +112,6 @@ public class Board {
 			}
 		}
 		return blanks;
-	}
-
-	/**
-	 * copy the current board and new a same board to apply possible actions
-	 * 
-	 * @param b
-	 * @return
-	 */
-	public Board copy() {
-		// copy the array so the two board won't point to the same array
-		int[] tmp = new int[9];
-		System.arraycopy(this.value, 0, tmp, 0, this.value.length);
-
-		List<Integer> tmp2 = new ArrayList<Integer>();
-		tmp2.addAll(this.blankspace);
-
-		Board b2 = new Board();
-		b2.value = tmp;
-		b2.filled = this.filled;
-		b2.blankspace = tmp2;
-
-		return b2;
-	}
-
-	// if a board is full
-	public Boolean isFull() {
-		return this.filled == ROW * ROW;
 	}
 
 	// if a position is filled

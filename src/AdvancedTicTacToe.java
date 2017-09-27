@@ -10,10 +10,17 @@ import java.util.List;
 public class AdvancedTicTacToe {
 	static final int X = Integer.MIN_VALUE;
 	static final int O = Integer.MAX_VALUE;
-	static final int UTILITY_WIN_AI = 1;
-	static final int UTILITY_WIN_PLAYER = -1;
+	static final int UTILITY_WIN_AI = 100;
+	static final int UTILITY_WIN_PLAYER = -100;
 	static final int UTILITY_TIE = 0;
 	static final int NONTERMINAL = Integer.MIN_VALUE;
+	// the possible winning three in a row
+	static final int[][] THREE_IN_A_ROW = { { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }, { 0, 3, 6 }, { 1, 4, 7 },
+			{ 2, 5, 8 }, { 0, 4, 8 }, { 2, 4, 6 } };
+	// the heuristic array for [playerNum][OpponentNum]
+	static final int[][] HEURISTIC_ARRAY = { { 0, -1, -10, -100 }, { 1, 0, 0, 0 }, { 10, 0, 0, 0 }, { 100, 0, 0, 0 } };
+
+	static final int DEPTH = 5;
 
 	int markerAI;// the marker AI takes
 	int markerPlayer;// the marker user takes
@@ -39,7 +46,10 @@ public class AdvancedTicTacToe {
 	}
 
 	Move makeAIMove() {
-		Move move = advancedMinimax();
+		// long start = System.nanoTime();
+		Move move = advancedHMinimax();
+		// long end = System.nanoTime();
+		// System.out.println(end-start);
 
 		this.nineBoard = this.nineBoard.applyMove(move, markerAI);
 
@@ -71,36 +81,56 @@ public class AdvancedTicTacToe {
 	/**
 	 * find the best move in nine boards
 	 * 
+	 * @param depth
+	 *            the limited depth
 	 * @return the board number and the best position
 	 */
-	private Move advancedMinimax() {
+	private Move advancedHMinimax() {
 		List<Move> possibleMove = possibleMove(this.nineBoard, markerAI);
 
 		Move bestMove = new Move();
 
 		int max = Integer.MIN_VALUE;
+		int alpha = UTILITY_WIN_PLAYER;
+		int beta = UTILITY_WIN_AI;
 
 		for (Move move : possibleMove) {
 			NineBoard b = this.nineBoard.applyMove(move, markerAI);
-			int v = advancedMinValue(b , Integer.MIN_VALUE, Integer.MAX_VALUE);
-			System.err.println("The value of action " + (move.boardNum + 1) + (move.position + 1) + " is " + v);
+			int v = advancedHMinValue(b, alpha, beta, 1);
+			System.err
+					.println("[Level 1]The value of action " + (move.boardNum + 1) + (move.position + 1) + " is " + v);
 
 			if (max < v) {
 				max = v;
 				bestMove = move;
-				System.err.println((move.boardNum + 1) + (move.position + 1) + " is a better move!");
+				System.err.println((move.boardNum + 1) + "" + (move.position + 1) + " is a better move!");
 			}
+
+			// already found the best possible value
+			if (max == beta) {
+				System.err.println("Found the best possible value and prune the rest!");
+				return bestMove;
+			}
+
+			alpha = Math.max(alpha, max);
 		}
 
 		return bestMove;
 	}
 
-	private int advancedMinValue(NineBoard nb, int alpha, int beta) {
+	private int advancedHMinValue(NineBoard nb, int alpha, int beta, int depth) {
 		int utility = advancedUtility(nb);
 
 		// state is a terminal state
-		if (utility != NONTERMINAL)
-			return utility;
+		if (utility != NONTERMINAL) {
+			if (depth < DEPTH) {
+				return utility;
+			}
+		}
+
+		if (depth == DEPTH) {
+			return evaluation(nb);
+		}
 
 		// state is not terminal
 		int min = Integer.MAX_VALUE;
@@ -108,27 +138,37 @@ public class AdvancedTicTacToe {
 
 		for (Move move : possibleMove) {
 			NineBoard b = nb.applyMove(move, markerPlayer);
-			int v = advancedMaxValue(b, alpha, beta);
-			System.err.println("Move " + move.boardNum + move.position + "'s value is " + v);
+			int v = advancedHMaxValue(b, alpha, beta, depth + 1);
+			System.err
+					.println("[Level " + (depth + 1) + "] Move " + move.boardNum + move.position + "'s value is " + v);
 
 			if (min > v) {
 				min = v;
 			}
-			if (min <= alpha){
-				System.err.println("Prune!");
+
+			// if min < the best choice we have found, then prune
+			if (min <= alpha) {
+				// System.err.println("Prune!");
 				return min;
-			}				
+			}
 			beta = Math.max(beta, min);
 		}
 		return min;
 	}
 
-	private int advancedMaxValue(NineBoard nb, int alpha, int beta) {
+	private int advancedHMaxValue(NineBoard nb, int alpha, int beta, int depth) {
 		int utility = advancedUtility(nb);
 
 		// state is a terminal state
-		if (utility != NONTERMINAL)
-			return utility;
+		if (utility != NONTERMINAL) {
+			if (depth < DEPTH) {
+				return utility;
+			}
+		}
+
+		if (depth == DEPTH) {
+			return evaluation(nb);
+		}
 
 		// state is not terminal
 		int max = Integer.MIN_VALUE;
@@ -136,18 +176,56 @@ public class AdvancedTicTacToe {
 
 		for (Move move : possibleMove) {
 			NineBoard b = nb.applyMove(move, markerAI);
-			int v = advancedMinValue(b, alpha, beta);
-			System.err.println("Move " + move.boardNum + move.position + "'s value is " + v);
+			int v = advancedHMinValue(b, alpha, beta, depth + 1);
+			System.err
+					.println("[Level " + (depth + 1) + "] Move " + move.boardNum + move.position + "'s value is " + v);
 
 			if (max < v) {
 				max = v;
 			}
-			if (max >= beta){
+			if (max >= beta) {
 				System.err.println("Prune!");
 				return max;
 			}
-				
+
 			alpha = Math.max(alpha, max);
+		}
+		return max;
+	}
+
+	/**
+	 * computer the heuristic evaluation of a nine board
+	 * 
+	 * @param nb
+	 * @return the heuristic evaluation
+	 */
+	int evaluation(NineBoard nb) {
+		int piece;
+		int max = Integer.MIN_VALUE;
+		int player = 0;
+		int AI = 0;
+		int eval = 0;
+
+		// count the number of AI pieces and player pieces in each row
+		for (Board b : nb.getBoards()) {
+			eval = 0;
+			int[] array = b.getValue();
+
+			for (int i = 0; i < 8; i++) {
+
+				player = 0;
+				AI = 0;
+				for (int j = 0; j < 3; j++) {
+
+					piece = array[THREE_IN_A_ROW[i][j]];
+					if (piece == this.markerAI)
+						AI++;
+					else if (piece == this.markerPlayer)
+						player++;
+				}
+				eval += HEURISTIC_ARRAY[AI][player];
+			}
+			max = Math.max(eval, max);
 		}
 		return max;
 	}
@@ -277,7 +355,7 @@ public class AdvancedTicTacToe {
 	List<Move> possibleMove(NineBoard nb, int marker) {
 		List<Move> possibleMove = null;
 
-		if (nb.getBoardAssigner() == this.markerAI)
+		if (nb.getBoardAssigner() == marker)
 			possibleMove = nb.possibleMove();
 		else {
 			Board current = nb.getSingleBoard(nb.getCurrentBoardNum());

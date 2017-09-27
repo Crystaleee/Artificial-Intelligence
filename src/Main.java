@@ -5,8 +5,6 @@ import java.util.Scanner;
  * @date 2017年9月20日 下午2:20:12
  */
 public class Main {
-	static final int X = Integer.MIN_VALUE;
-	static final int O = Integer.MAX_VALUE;
 	
 	public static void main(String[] args) {
 
@@ -21,19 +19,7 @@ public class Main {
 			if (ttt == null)
 				continue;
 
-			// game on
-			int[] array = {X,O,X,O,O,X,X,X,O};
-			Board b = new Board(array);
-			
-			int[] array2 = {1,2,3,4,5,6,7,8,9};
-			Board b2 = new Board(array2);
-			
-			int[] array3 = {X,2,3,O,5,X,X,O,O};
-			Board b3 = new Board(array3);
-			
-			Board[] bs= {b2,b3,b,b,b,b,b,b,b};
-			ttt.nineBoard.setBoards(bs);
-			
+			// game on			
 			while (!ttt.isGameOver()) {
 				System.err.println();
 
