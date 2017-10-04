@@ -11,6 +11,7 @@ public class Move {
 		this.position = pos;
 	}
 
-	public Move() {	
+	public Move() {
+		
 	}
 }

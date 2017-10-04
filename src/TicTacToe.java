@@ -6,8 +6,9 @@ import java.util.List;
  * @date 2017年9月20日 下午12:05:44
  */
 public class TicTacToe {
-	static final int X = 1;
-	static final int O = -1;
+	//X/0 chaged from -1/1 to show pos num of the blanks
+	static final int X = Integer.MIN_VALUE;
+	static final int O = Integer.MAX_VALUE;
 	static final int UTILITY_WIN_AI = 1;
 	static final int UTILITY_WIN_PLAYER = -1;
 	static final int UTILITY_TIE = 0;
@@ -20,10 +21,12 @@ public class TicTacToe {
 
 	public TicTacToe(int marker) {
 		this.board = new Board();
-		// int[] v = {-1,1,0,-1,1,1,0,-1,0};
-		// this.board = new Board(v);
 		this.markerAI = marker;
-		this.markerPlayer = -markerAI;
+		if (marker == X) {
+			this.markerPlayer = O;
+		} else {
+			this.markerPlayer = X;
+		}
 	}
 
 	boolean isLegalMove(int move) {
